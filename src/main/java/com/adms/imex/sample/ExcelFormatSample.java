@@ -37,7 +37,6 @@ public class ExcelFormatSample {
 	}
 	
 	public void testGitConflic() {
-		System.out.println("Hello Test");
 		
 		System.out.println("Hi, World!");
 		
@@ -49,8 +48,8 @@ public class ExcelFormatSample {
 		 * 
 		 * 
 		 * 
-		 * 
-		 * 
+		 * Moth Pc
+		 * Test Conflix
 		 */
 		
 		System.out.println("wow");
