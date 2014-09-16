@@ -35,5 +35,25 @@ public class ExcelFormatSample {
 		ex.writeExcel(sampleOutput, dataHolder);
 		sampleOutput.close();
 	}
+	
+	public void testGitConflic() {
+		System.out.println("Hello Test");
+		
+		System.out.println("Hi, World!");
+		
+		System.out.println("Bla Bla");
+		
+		
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		System.out.println("wow");
+	}
 
 }

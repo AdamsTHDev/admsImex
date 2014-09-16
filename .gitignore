@@ -1,7 +1,19 @@
 
 /target/
+# Thumbnails
+._*
 
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
 *.classpath
 *.project
 .settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.m2e.core.prefs
+*.class
+target/classes/FileFormat.xml
+target/classes/sampleReport.xlsx
+/target
+
+.settings/org.eclipse.wst.common.component
+.settings/org.eclipse.wst.common.project.facet.core.xml
