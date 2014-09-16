@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileFormat fileName="" fileType="xlsx" locale="US">
+	<DataSet description="sampleData">
+		<DataSheet sheetName="Sheet1" sheetIndex="0"> <!-- index start with 0, 1, 2,...  -->
+			<!-- <DataCell row="1" column="A" dataType="text|number|date|boolean|blank|formula|error" dataFormat="" fieldName="fieldAaa" defaultValue="" /> -->
+			<DataCell row="2" column="B" dataType="DATE" dataFormat="dd/MM/yyyy" fieldName="reportAsOf" />
+			<DataCell row="2" column="D" dataType="DATE" dataFormat="yyyyMMMdd" fieldName="testDateString" />
+			<DataRecord listSourceName="personList" beginRow="5" endRow="20">
+				<DataCell row="1" column="B" dataType="NUMBER" dataFormat="0" fieldName="index" />
+				<DataCell row="1" column="C" dataType="TEXT" fieldName="firstName" />
+				<DataCell row="1" column="D" dataType="NUMBER" dataFormat="#,##0.00" fieldName="total" />
+				<!-- <EndRecordCondition
+					column="A" excel column ex: A, B, C, AA, AB, etc
+					comparator="EQ" comparator operation  EQ (Equal), NE (Not Equal), BLANK (Blank cell or Null cell)
+					checkValue="abc" some text, some number or blank cell
+					/> -->
+				<EndRecordCondition column="B" comparator="EQ" checkValue="end" />
+			</DataRecord>
+		</DataSheet>
+	</DataSet>
+</FileFormat>
