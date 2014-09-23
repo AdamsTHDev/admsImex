@@ -49,9 +49,17 @@ public class ExcelFormatReader {
 			{
 				for (SheetDefinition sheetDefinition : this.fileFormatDefinition.getDataSetDefinition().getSheetDefinitionList())
 				{
+					System.out.println(sheetDefinition);
+					Sheet sheet = getSheet(sheetDefinition);
+
+					if (sheet == null && Boolean.TRUE.equals(sheetDefinition.getSkipWhenNull()))
+					{
+						continue;
+					}
+
 					if (StringUtils.isBlank(sheetDefinition.getSheetName()))
 					{
-						sheetDefinition.setSheetName(getSheet(sheetDefinition).getSheetName());
+						sheetDefinition.setSheetName(sheet.getSheetName());
 					}
 
 					DataHolder sheetDataHolder = new SimpleMapDataHolder();
@@ -185,10 +193,10 @@ public class ExcelFormatReader {
 	private Sheet getSheet(SheetDefinition sheetDefinition)
 			throws Exception
 	{
-		return getSheet(sheetDefinition, false);
+		return getSheet(sheetDefinition, Boolean.TRUE.equals(sheetDefinition.getSkipWhenNull()));
 	}
 
-	private Sheet getSheet(SheetDefinition sheetDefinition, boolean errorWhenNull)
+	private Sheet getSheet(SheetDefinition sheetDefinition, boolean skipWhenNull)
 			throws Exception
 	{
 		Sheet s = null;
@@ -197,16 +205,22 @@ public class ExcelFormatReader {
 		{
 			s = this.wb.getSheet(sheetDefinition.getSheetName());
 
-			if (s == null && errorWhenNull)
+			if (s == null && !skipWhenNull)
 			{
 				throw new Exception("sheet name '" + sheetDefinition.getSheetName() + "' not found");
 			}
 		}
 		else if (sheetDefinition.getSheetIndex() != null && sheetDefinition.getSheetIndex() > -1)
 		{
-			s = this.wb.getSheetAt(sheetDefinition.getSheetIndex());
+			try
+			{
+				s = this.wb.getSheetAt(sheetDefinition.getSheetIndex());
+			}
+			catch (Exception e)
+			{
+			}
 
-			if (s == null && errorWhenNull)
+			if (s == null && !skipWhenNull)
 			{
 				throw new Exception("sheet index '" + sheetDefinition.getSheetIndex() + "' not found");
 			}

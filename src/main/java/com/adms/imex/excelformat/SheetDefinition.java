@@ -13,6 +13,9 @@ public class SheetDefinition extends CellDefinitionContainer {
 	@XStreamAsAttribute
 	private Integer sheetIndex;
 
+	@XStreamAsAttribute
+	private Boolean skipWhenNull;
+
 	@XStreamImplicit(itemFieldName = "DataRecord")
 	private List<RecordDefinition> recordDefinitionList;
 
@@ -38,6 +41,16 @@ public class SheetDefinition extends CellDefinitionContainer {
 		this.sheetIndex = sheetIndex;
 	}
 
+	public Boolean getSkipWhenNull()
+	{
+		return skipWhenNull;
+	}
+
+	public void setSkipWhenNull(Boolean skipWhenNull)
+	{
+		this.skipWhenNull = skipWhenNull;
+	}
+
 	public List<RecordDefinition> getRecordDefinitionList()
 	{
 		return recordDefinitionList;
@@ -61,7 +74,7 @@ public class SheetDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "SheetDefinition [sheetName=" + sheetName + ", sheetIndex=" + sheetIndex + ", recordDefinitionList=" + recordDefinitionList + ", cellDefinitionList=" + cellDefinitionList + "]";
+		return "SheetDefinition [sheetName=" + sheetName + ", sheetIndex=" + sheetIndex + ", skipWhenNull=" + skipWhenNull + ", recordDefinitionList=" + recordDefinitionList + ", cellDefinitionList=" + cellDefinitionList + "]";
 	}
 
 }

@@ -7,15 +7,16 @@
 			<DataCell row="2" column="D" dataType="DATE" dataFormat="yyyyMMMdd" fieldName="testDateString" />
 			<DataRecord listSourceName="personList" beginRow="5" endRow="20">
 				<DataCell row="1" column="B" dataType="NUMBER" dataFormat="0" fieldName="index" />
-				<DataCell row="1" column="C" dataType="TEXT" fieldName="firstName" />
+				<DataCell row="1" column="C" dataType="TEXT" fieldName="firstName" autoTrim="TRUE"/>
 				<DataCell row="1" column="D" dataType="NUMBER" dataFormat="#,##0.00" fieldName="total" />
 				<!-- <EndRecordCondition
-					column="A" excel column ex: A, B, C, AA, AB, etc
-					comparator="EQ" comparator operation  EQ (Equal), NE (Not Equal), BLANK (Blank cell or Null cell)
-					checkValue="abc" some text, some number or blank cell
+					column="A"        : excel column ex: A, B, C, AA, AB, etc
+					comparator="EQ"   : comparator operation  EQ (Equal), NE (Not Equal), BLANK (Blank cell or Null cell)
+					checkValue="abc"  : some text, some number or blank cell
 					/> -->
 				<EndRecordCondition column="B" comparator="EQ" checkValue="end" />
 			</DataRecord>
 		</DataSheet>
+		<DataSheet sheetIndex="1" skipWhenNull="TRUE" /> <!-- set skipWhenNull to 'TRUE' to avoid exception when this Sheet is not found. Default value is 'FALSE' -->
 	</DataSet>
 </FileFormat>
