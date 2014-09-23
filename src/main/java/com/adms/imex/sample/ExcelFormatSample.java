@@ -45,22 +45,4 @@ public class ExcelFormatSample {
 		sampleOutput.close();
 	}
 
-	public void testGitConflic()
-	{
-
-		System.out.println("Hi, World!");
-
-		System.out.println("Bla Bla");
-
-		/*
-		 * 
-		 * 
-		 * 
-		 * 
-		 * Moth Pc Test Conflix DiDi
-		 */
-
-		System.out.println("wow");
-	}
-
 }
