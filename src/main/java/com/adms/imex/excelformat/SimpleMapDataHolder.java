@@ -1,5 +1,6 @@
 package com.adms.imex.excelformat;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,18 @@ public class SimpleMapDataHolder implements DataHolder {
 	public Object getValue()
 	{
 		return value;
+	}
+	
+	public String getStringValue() {
+		return String.valueOf(value);
+	}
+	
+	public Integer getIntValue() {
+		return Integer.parseInt(getStringValue());
+	}
+	
+	public BigDecimal getDecimalValue() {
+		return new BigDecimal(getStringValue());
 	}
 
 	public void setValue(Object value)
