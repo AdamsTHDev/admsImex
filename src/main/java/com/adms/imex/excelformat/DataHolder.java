@@ -1,11 +1,19 @@
 package com.adms.imex.excelformat;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface DataHolder {
 
 	public Object getValue();
-
+	
+	public String getStringValue();
+	
+	public Integer getIntValue();
+	
+	public BigDecimal getDecimalValue();
+	
 	public void setValue(Object value);
 
 	public void put(String fieldName, DataHolder dataHolder);
