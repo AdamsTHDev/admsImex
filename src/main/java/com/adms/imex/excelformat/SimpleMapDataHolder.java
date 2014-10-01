@@ -41,15 +41,15 @@ public class SimpleMapDataHolder implements DataHolder {
 	}
 	
 	public String getStringValue() {
-		return String.valueOf(value);
+		return (String) (null == value ? value : String.valueOf(value));
 	}
 	
 	public Integer getIntValue() {
-		return Integer.parseInt(getStringValue());
+		return (Integer) (null == value ? value : Integer.parseInt(getStringValue()));
 	}
 	
 	public BigDecimal getDecimalValue() {
-		return new BigDecimal(getStringValue());
+		return (BigDecimal) (null == value ? value : new BigDecimal(getStringValue()));
 	}
 
 	public void setValue(Object value)

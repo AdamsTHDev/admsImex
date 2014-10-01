@@ -1,5 +1,6 @@
 package com.adms.imex.excelformat;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -180,6 +181,10 @@ public class CellDefinition {
 	{
 		switch (this.dataType) {
 		case NUMBER:
+			Object o = getDecimalFormatter().parse(value);
+			if (o instanceof Long)
+				return new BigDecimal((Long) o);
+			
 			return getDecimalFormatter().parse(value);
 
 		case DATE:
