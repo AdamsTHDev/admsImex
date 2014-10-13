@@ -49,7 +49,13 @@ public class ExcelFormatReader {
 			{
 				for (SheetDefinition sheetDefinition : this.fileFormatDefinition.getDataSetDefinition().getSheetDefinitionList())
 				{
-					System.out.println(sheetDefinition);
+					// do
+					// {
+					// }
+					// while
+					// (!Boolean.TRUE.equals(sheetDefinition.getRepeatSheet())
+					// /*|| (sheet == null )*/);
+
 					Sheet sheet = getSheet(sheetDefinition);
 
 					if (sheet == null && Boolean.TRUE.equals(sheetDefinition.getSkipWhenNull()))
@@ -85,20 +91,34 @@ public class ExcelFormatReader {
 							sheetDataHolder.putDataList(recordDefinition.getListSourceName(), recordList);
 
 							int currentRow = recordDefinition.getBeginRow();
+							boolean dataRecordFlag = false;
 
-							while (isDataRecord(currentRow, recordDefinition.getEndRecordCondition()) && currentRow <= recordDefinition.getEndRow())
+							while (currentRow <= recordDefinition.getEndRow())
 							{
-								DataHolder recordDataHolder = new SimpleMapDataHolder();
-								recordList.add(recordDataHolder);
-
-								for (CellDefinition cellDefinition : recordDefinition.getCellDefinitionList())
+								if (isBeginDataRecord(currentRow, recordDefinition.getBeginRecordCondition()))
 								{
-									DataHolder cellDataHolder = new SimpleMapDataHolder();
-									recordDataHolder.put(cellDefinition.getFieldName(), cellDataHolder);
-
-									cellDefinition.setCurrentRow(currentRow);
-									readCellValue(cellDataHolder, cellDefinition);
+									dataRecordFlag = true;
 								}
+
+								if (dataRecordFlag && !isEndDataRecord(currentRow, recordDefinition.getEndRecordCondition()))
+								{
+									DataHolder recordDataHolder = new SimpleMapDataHolder();
+									recordList.add(recordDataHolder);
+
+									for (CellDefinition cellDefinition : recordDefinition.getCellDefinitionList())
+									{
+										DataHolder cellDataHolder = new SimpleMapDataHolder();
+										recordDataHolder.put(cellDefinition.getFieldName(), cellDataHolder);
+
+										cellDefinition.setCurrentRow(currentRow);
+										readCellValue(cellDataHolder, cellDefinition);
+									}
+								}
+								else if (isEndDataRecord(currentRow, recordDefinition.getEndRecordCondition()))
+								{
+									dataRecordFlag = false;
+								}
+
 								currentRow++;
 							}
 						}
@@ -118,13 +138,51 @@ public class ExcelFormatReader {
 		return this.fileDataHolder;
 	}
 
-	private boolean isDataRecord(int currentRow, EndRecordCondition endRecordCondition)
+	private boolean isBeginDataRecord(int currentRow, BeginRecordCondition beginRecordCondition)
 			throws Exception
 	{
-		boolean isDataRecord = true;
+		boolean isDataRecord = false;
+		beginRecordCondition.setRow(currentRow);
+
+		Object value = readRecordConditionValue(beginRecordCondition);
+		String sValue = value != null ? value.toString() : null;
+
+		switch (beginRecordCondition.getComparator()) {
+		case EQ:
+			if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
+			{
+				throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = EQ");
+			}
+			isDataRecord = StringUtils.isNotBlank(sValue) && beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
+			break;
+
+		case NE:
+			if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
+			{
+				throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = NE");
+			}
+			isDataRecord = StringUtils.isBlank(sValue) || !beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
+			break;
+
+		case BLANK:
+			isDataRecord = value == null || StringUtils.isBlank(value.toString());
+			break;
+
+		default:
+			throw new Exception("Comparator '" + beginRecordCondition.getComparator() + "' is not supportted yet");
+			// break;
+		}
+
+		return isDataRecord;
+	}
+
+	private boolean isEndDataRecord(int currentRow, EndRecordCondition endRecordCondition)
+			throws Exception
+	{
+		boolean isDataRecord = false;
 		endRecordCondition.setRow(currentRow);
 
-		Object value = readEndRecordConditionValue(endRecordCondition);
+		Object value = readRecordConditionValue(endRecordCondition);
 		String sValue = value != null ? value.toString() : null;
 
 		switch (endRecordCondition.getComparator()) {
@@ -133,7 +191,7 @@ public class ExcelFormatReader {
 			{
 				throw new Exception("checkValue can not be empty while checking EndRecordCondition with comparator = EQ");
 			}
-			isDataRecord = !(StringUtils.isNotBlank(sValue) && endRecordCondition.getCheckValue().equalsIgnoreCase(sValue));
+			isDataRecord = endRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
 			break;
 
 		case NE:
@@ -141,11 +199,11 @@ public class ExcelFormatReader {
 			{
 				throw new Exception("checkValue can not be empty while checking EndRecordCondition with comparator = NE");
 			}
-			isDataRecord = !(StringUtils.isBlank(sValue) || !endRecordCondition.getCheckValue().equalsIgnoreCase(sValue));
+			isDataRecord = !endRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
 			break;
 
 		case BLANK:
-			isDataRecord = !(value == null || StringUtils.isBlank(value.toString()));
+			isDataRecord = value == null || StringUtils.isBlank(value.toString());
 			break;
 
 		default:
@@ -156,22 +214,34 @@ public class ExcelFormatReader {
 		return isDataRecord;
 	}
 
-	private Object readEndRecordConditionValue(EndRecordCondition endRecordCondition)
+	private Object readRecordConditionValue(CellDefinition recordCondition)
 			throws Exception
 	{
-		Sheet sheet = getSheet(endRecordCondition);
+		Sheet sheet = getSheet(recordCondition);
 
 		if (sheet != null)
 		{
-			Row row = sheet.getRow(endRecordCondition.getRow() - 1);
+			Row row = null;
+
+			if (recordCondition instanceof BeginRecordCondition)
+			{
+				if (recordCondition.getRow() >= 2)
+				{
+					row = sheet.getRow(recordCondition.getRow() - 2);
+				}
+			}
+			else
+			{
+				row = sheet.getRow(recordCondition.getRow() - 1);
+			}
 
 			if (row != null)
 			{
-				Cell cell = row.getCell(endRecordCondition.getColumn().getColumnIndex());
+				Cell cell = row.getCell(recordCondition.getColumn().getColumnIndex());
 
 				if (cell != null)
 				{
-					return readCellValue(cell, endRecordCondition);
+					return readCellValue(cell, recordCondition);
 				}
 			}
 		}
@@ -338,8 +408,23 @@ public class ExcelFormatReader {
 				break;
 
 			case Cell.CELL_TYPE_FORMULA:
-				value = c.getCellFormula();
-				// TODO
+				if (CellDataType.DATE.equals(cellDefinition.getDataType()))
+				{
+					value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+				}
+				else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
+				{
+					value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+				}
+				else
+				{
+					value = c.getStringCellValue();
+
+					if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
+					{
+						value = ((String) value).trim();
+					}
+				}
 				break;
 
 			case Cell.CELL_TYPE_BLANK:

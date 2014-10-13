@@ -14,6 +14,9 @@ public class RecordDefinition extends CellDefinitionContainer {
 	@XStreamAsAttribute
 	private Integer endRow;
 
+	@XStreamAlias("BeginRecordCondition")
+	private BeginRecordCondition beginRecordCondition;
+
 	@XStreamAlias("EndRecordCondition")
 	private EndRecordCondition endRecordCondition;
 
@@ -49,6 +52,16 @@ public class RecordDefinition extends CellDefinitionContainer {
 		this.endRow = endRow;
 	}
 
+	public BeginRecordCondition getBeginRecordCondition()
+	{
+		return beginRecordCondition;
+	}
+
+	public void setBeginRecordCondition(BeginRecordCondition beginRecordCondition)
+	{
+		this.beginRecordCondition = beginRecordCondition;
+	}
+
 	public EndRecordCondition getEndRecordCondition()
 	{
 		return endRecordCondition;
@@ -68,6 +81,11 @@ public class RecordDefinition extends CellDefinitionContainer {
 	{
 		this.sheetDefinition = sheetDefinition;
 
+		if (this.beginRecordCondition != null)
+		{
+			this.beginRecordCondition.setSheetDefinition(sheetDefinition);
+		}
+
 		if (this.endRecordCondition != null)
 		{
 			this.endRecordCondition.setSheetDefinition(sheetDefinition);
@@ -77,7 +95,7 @@ public class RecordDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", endRecordCondition=" + endRecordCondition + "]";
+		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", beginRecordCondition=" + beginRecordCondition + ", endRecordCondition=" + endRecordCondition + "]";
 	}
 
 }
