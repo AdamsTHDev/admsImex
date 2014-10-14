@@ -35,6 +35,14 @@ public class ExcelFormatSample {
 			{
 				System.out.println(person.printValues());
 			}
+			
+			System.out.println(sheetDataHolder.getDataList("testList").size());
+
+			List<DataHolder> testList = sheetDataHolder.getDataList("testList");
+			for (DataHolder test : testList)
+			{
+				System.out.println(test.printValues());
+			}
 		}
 
 		fileFormat.close();

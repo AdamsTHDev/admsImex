@@ -18,11 +18,15 @@
 					/> -->
 				<EndRecordCondition column="B" comparator="EQ" checkValue="end" />
 			</DataRecord>
+			<DataRecord listSourceName="testList" beginRow="1" endRow="20">
+				<DataCell row="1" column="G" dataType="TEXT" fieldName="test" />
+				<EndRecordCondition column="G" comparator="EQ" checkValue="END" />
+			</DataRecord>
 		</DataSheet>
 		<DataSheet sheetIndex="1" skipWhenNull="TRUE" /> <!-- set skipWhenNull to 'TRUE' to avoid exception when this Sheet is not found. Default value is 'FALSE' -->
 
 		<!--
-		<DataSheet sheetIndex="2" repeatSheet="TRUE" repeatUntilNull="TRUE" repeatUntilIndex="" repeatUntilSheetname="">
+		<DataSheet sheetIndex="10" repeatSheet="TRUE" repeatUntilNull="TRUE" repeatUntilIndex="" repeatUntilSheetname="">
 			<DataCell row="1" column="A" dataType="TEXT" fieldName="testRepeatSheet" />
 			<DataCell row="1" column="B" dataType="DATE" dataFormat="dd/MM/yyyy" fieldName="reportAsOf" />
 		</DataSheet>
