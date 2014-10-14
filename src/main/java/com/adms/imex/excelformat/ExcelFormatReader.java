@@ -84,10 +84,9 @@ public class ExcelFormatReader {
 
 					if (CollectionUtils.isNotEmpty(sheetDefinition.getRecordDefinitionList()))
 					{
-						List<DataHolder> recordList = new ArrayList<DataHolder>();
-
 						for (RecordDefinition recordDefinition : sheetDefinition.getRecordDefinitionList())
 						{
+							List<DataHolder> recordList = new ArrayList<DataHolder>();
 							sheetDataHolder.putDataList(recordDefinition.getListSourceName(), recordList);
 
 							int currentRow = recordDefinition.getBeginRow();
@@ -116,7 +115,7 @@ public class ExcelFormatReader {
 								}
 								else if (isEndDataRecord(currentRow, recordDefinition.getEndRecordCondition()))
 								{
-									dataRecordFlag = false;
+									break;
 								}
 
 								currentRow++;
@@ -142,35 +141,44 @@ public class ExcelFormatReader {
 			throws Exception
 	{
 		boolean isDataRecord = false;
-		beginRecordCondition.setRow(currentRow);
 
-		Object value = readRecordConditionValue(beginRecordCondition);
-		String sValue = value != null ? value.toString() : null;
+		if (beginRecordCondition != null)
+		{
+			beginRecordCondition.setRow(currentRow);
 
-		switch (beginRecordCondition.getComparator()) {
-		case EQ:
-			if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
-			{
-				throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = EQ");
+			Object value = readRecordConditionValue(beginRecordCondition);
+			String sValue = value != null ? value.toString() : null;
+
+			switch (beginRecordCondition.getComparator()) {
+			case EQ:
+				if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
+				{
+					throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = EQ");
+				}
+				isDataRecord = StringUtils.isNotBlank(sValue) && beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
+				break;
+
+			case NE:
+				if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
+				{
+					throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = NE");
+				}
+				isDataRecord = StringUtils.isBlank(sValue) || !beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
+				break;
+
+			case BLANK:
+				isDataRecord = value == null || StringUtils.isBlank(value.toString());
+				break;
+
+			default:
+				throw new Exception("Comparator '" + beginRecordCondition.getComparator() + "' is not supportted yet");
+				// break;
 			}
-			isDataRecord = StringUtils.isNotBlank(sValue) && beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
-			break;
-
-		case NE:
-			if (StringUtils.isBlank(beginRecordCondition.getCheckValue()))
-			{
-				throw new Exception("checkValue can not be empty while checking BeginRecordCondition with comparator = NE");
-			}
-			isDataRecord = StringUtils.isBlank(sValue) || !beginRecordCondition.getCheckValue().equalsIgnoreCase(sValue);
-			break;
-
-		case BLANK:
-			isDataRecord = value == null || StringUtils.isBlank(value.toString());
-			break;
-
-		default:
-			throw new Exception("Comparator '" + beginRecordCondition.getComparator() + "' is not supportted yet");
-			// break;
+		}
+		else
+		{
+			// default to TRUE if not found tag <BeginRecordCondition />
+			isDataRecord = true;
 		}
 
 		return isDataRecord;
