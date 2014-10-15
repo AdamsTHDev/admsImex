@@ -410,7 +410,7 @@ public class ExcelFormatReader {
 
 					if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
 					{
-						value = ((String) value).trim();
+						value = ((String) value).replaceAll(" ", "").trim();
 					}
 				}
 				break;
@@ -430,7 +430,7 @@ public class ExcelFormatReader {
 
 					if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
 					{
-						value = ((String) value).trim();
+						value = ((String) value).replaceAll(" ", "").trim();
 					}
 				}
 				break;
