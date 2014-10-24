@@ -379,86 +379,102 @@ public class ExcelFormatReader {
 	private Object readCellValue(DataHolder dataHolder, Cell c, CellDefinition cellDefinition)
 			throws Exception
 	{
-		Object value = null;
-
-		if (c != null)
+		try
 		{
-			switch (c.getCellType()) {
-			case Cell.CELL_TYPE_NUMERIC: // number & date
-				if (CellDataType.DATE.equals(cellDefinition.getDataType()))
-				{
-					value = c.getDateCellValue();
-				}
-				else
-				{
-					value = new BigDecimal(c.getNumericCellValue());
-				}
-				break;
+			Object value = null;
 
-			case Cell.CELL_TYPE_STRING:
-				if (CellDataType.DATE.equals(cellDefinition.getDataType()))
-				{
-					value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
-				}
-				else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
-				{
-					value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
-				}
-				else
-				{
-					value = c.getStringCellValue();
-
-					if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
+			if (c != null)
+			{
+				switch (c.getCellType()) {
+				case Cell.CELL_TYPE_NUMERIC: // number & date
+					if (CellDataType.DATE.equals(cellDefinition.getDataType()))
 					{
-						value = ((String) value).replaceAll(" ", "").trim();
+						value = c.getDateCellValue();
 					}
-				}
-				break;
-
-			case Cell.CELL_TYPE_FORMULA:
-				if (CellDataType.DATE.equals(cellDefinition.getDataType()))
-				{
-					value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
-				}
-				else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
-				{
-					value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
-				}
-				else
-				{
-					value = c.getStringCellValue();
-
-					if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
+					else
 					{
-						value = ((String) value).replaceAll(" ", "").trim();
+						value = new BigDecimal(c.getNumericCellValue());
 					}
+					break;
+
+				case Cell.CELL_TYPE_STRING:
+					if (CellDataType.DATE.equals(cellDefinition.getDataType()))
+					{
+						value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+					}
+					else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
+					{
+						value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+					}
+					else
+					{
+						value = c.getStringCellValue();
+
+						if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
+						{
+							value = ((String) value).replaceAll(" ", "").trim();
+						}
+					}
+					break;
+
+				case Cell.CELL_TYPE_FORMULA:
+					if (CellDataType.DATE.equals(cellDefinition.getDataType()))
+					{
+						value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+					}
+					else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
+					{
+						switch (c.getCachedFormulaResultType()) {
+						case Cell.CELL_TYPE_NUMERIC:
+							value = new BigDecimal(c.getNumericCellValue());
+							break;
+
+						default:
+							value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+							break;
+						}
+					}
+					else
+					{
+						value = c.getStringCellValue();
+
+						if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
+						{
+							value = ((String) value).replaceAll(" ", "").trim();
+						}
+					}
+					break;
+
+				case Cell.CELL_TYPE_BLANK:
+
+					// TODO
+					break;
+
+				case Cell.CELL_TYPE_BOOLEAN:
+					value = c.getBooleanCellValue();
+					// TODO
+					break;
+
+				case Cell.CELL_TYPE_ERROR:
+					// TODO
+					break;
+
+				default:
+					break;
 				}
-				break;
-
-			case Cell.CELL_TYPE_BLANK:
-
-				// TODO
-				break;
-
-			case Cell.CELL_TYPE_BOOLEAN:
-				value = c.getBooleanCellValue();
-				// TODO
-				break;
-
-			case Cell.CELL_TYPE_ERROR:
-				// TODO
-				break;
-
-			default:
-				break;
 			}
-		}
 
-		if (dataHolder != null)
+			if (dataHolder != null)
+			{
+				dataHolder.setValue(value);
+			}
+
+			return value;
+		}
+		catch (Exception e)
 		{
-			dataHolder.setValue(value);
+			System.err.println("found error while reading cell [" + cellDefinition + "]");
+			throw e;
 		}
-
-		return value;
 	}
 }
