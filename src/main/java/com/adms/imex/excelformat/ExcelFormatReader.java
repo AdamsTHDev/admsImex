@@ -113,7 +113,7 @@ public class ExcelFormatReader {
 										readCellValue(cellDataHolder, cellDefinition);
 									}
 								}
-								else if (isEndDataRecord(currentRow, recordDefinition.getEndRecordCondition()))
+								else if (dataRecordFlag && isEndDataRecord(currentRow, recordDefinition.getEndRecordCondition()))
 								{
 									break;
 								}
@@ -233,10 +233,10 @@ public class ExcelFormatReader {
 
 			if (recordCondition instanceof BeginRecordCondition)
 			{
-				if (recordCondition.getRow() >= 2)
-				{
+//				if (recordCondition.getRow() >= 2)
+//				{
 					row = sheet.getRow(recordCondition.getRow() - 2);
-				}
+//				}
 			}
 			else
 			{
