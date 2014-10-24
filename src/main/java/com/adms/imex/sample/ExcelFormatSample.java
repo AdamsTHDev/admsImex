@@ -14,8 +14,11 @@ public class ExcelFormatSample {
 	public static void main(String[] args)
 			throws Exception
 	{
-		InputStream fileFormat = URLClassLoader.getSystemResourceAsStream("FileFormat.xml");
-		InputStream sampleReport = URLClassLoader.getSystemResourceAsStream("sampleReport.xlsx");
+		InputStream fileFormat = null;
+		InputStream sampleReport = null;
+
+		fileFormat = URLClassLoader.getSystemResourceAsStream("FileFormat.xml");
+		sampleReport = URLClassLoader.getSystemResourceAsStream("sampleReport.xlsx");
 
 		ExcelFormat ex = new ExcelFormat(fileFormat);
 		DataHolder fileDataHolder = ex.readExcel(sampleReport);
@@ -27,7 +30,7 @@ public class ExcelFormatSample {
 
 			System.out.println(sheetDataHolder.get("reportAsOf").getValue());
 			System.out.println(sheetDataHolder.get("testDateString").getValue());
-			
+
 			System.out.println(sheetDataHolder.getDataList("personList").size());
 
 			List<DataHolder> personList = sheetDataHolder.getDataList("personList");
@@ -35,7 +38,7 @@ public class ExcelFormatSample {
 			{
 				System.out.println(person.printValues());
 			}
-			
+
 			System.out.println(sheetDataHolder.getDataList("testList").size());
 
 			List<DataHolder> testList = sheetDataHolder.getDataList("testList");
