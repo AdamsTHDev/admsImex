@@ -179,20 +179,23 @@ public class CellDefinition {
 	public Object parse(String value)
 			throws Exception
 	{
-		switch (this.dataType) {
-		case NUMBER:
-			Object o = getDecimalFormatter().parse(value);
-			if (o instanceof Long)
-				return new BigDecimal((Long) o);
-			
-			return getDecimalFormatter().parse(value);
+		if(!StringUtils.isBlank(value)) {
+			switch (this.dataType) {
+			case NUMBER:
+				Object o = getDecimalFormatter().parse(value);
+				if (o instanceof Long)
+					return new BigDecimal((Long) o);
+				
+				return getDecimalFormatter().parse(value);
 
-		case DATE:
-			return getDateFormatter().parse(value);
+			case DATE:
+				return getDateFormatter().parse(value);
 
-		default:
-			return null;
+			default:
+				return null;
+			}
 		}
+		return null;
 	}
 
 	@Override

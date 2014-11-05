@@ -400,7 +400,13 @@ public class ExcelFormatReader {
 				case Cell.CELL_TYPE_STRING:
 					if (CellDataType.DATE.equals(cellDefinition.getDataType()))
 					{
-						value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+						try {
+//							value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+							value = (Date) (c.getStringCellValue() != null && !StringUtils.isBlank(c.getStringCellValue()) ? cellDefinition.parse(c.getStringCellValue()) : null);
+						} catch(Exception e) {
+							System.err.println("sheet: " + c.getSheet().getSheetName() + " | row: " + c.getRowIndex() + " | cell: " + c.getColumnIndex());
+							throw e;
+						}
 					}
 					else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
 					{
@@ -436,7 +442,12 @@ public class ExcelFormatReader {
 					}
 					else
 					{
-						value = c.getStringCellValue();
+						try {
+							value = c.getStringCellValue();
+						} catch(Exception e) {
+							System.err.println("ERROR-> Sheet: " + c.getSheet().getSheetName() + " | Row: " + c.getRow().getRowNum() + " | Cell: " + c.getColumnIndex());
+							throw e;
+						}
 
 						if (value != null && Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
 						{
