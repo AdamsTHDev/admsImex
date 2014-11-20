@@ -1,6 +1,7 @@
 package com.adms.imex.excelformat;
 
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.adms.imex.enums.CellDataType;
 
 public class ExcelFileFormatWriter {
 
@@ -46,7 +49,16 @@ public class ExcelFileFormatWriter {
 			{
 				for (SheetDefinition sheetDefinition : this.fileFormatDefinition.getDataSetDefinition().getSheetDefinitionList())
 				{
+					if (StringUtils.isBlank(sheetDefinition.getSheetName()))
+					{
+						sheetDefinition.setSheetName(this.fileDataHolder.getSheetNameByIndex(sheetDefinition.getSheetIndex()));
+					}
 					DataHolder sheetDataHolder = this.fileDataHolder.get(sheetDefinition.getSheetName());
+
+					if (sheetDataHolder == null && Boolean.TRUE.equals(sheetDefinition.getSkipWhenNull()))
+					{
+						continue;
+					}
 
 					if (CollectionUtils.isNotEmpty(sheetDefinition.getCellDefinitionList()))
 					{
@@ -95,11 +107,21 @@ public class ExcelFileFormatWriter {
 
 	private Sheet getSheet(CellDefinition cellDefinition)
 	{
-		Sheet sheet = this.wb.getSheet(cellDefinition.getSheetDefinition().getSheetName());
+		String sheetName = null;
+		if (StringUtils.isNotBlank(cellDefinition.getSheetDefinition().getOutputSheetName()))
+		{
+			sheetName = cellDefinition.getSheetDefinition().getOutputSheetName();
+		}
+		else
+		{
+			sheetName = cellDefinition.getSheetDefinition().getSheetName();
+		}
+
+		Sheet sheet = this.wb.getSheet(sheetName);
 
 		if (sheet == null)
 		{
-			sheet = this.wb.createSheet(cellDefinition.getSheetDefinition().getSheetName());
+			sheet = this.wb.createSheet(sheetName);
 		}
 
 		return sheet;
@@ -162,7 +184,32 @@ public class ExcelFileFormatWriter {
 		case DATE:
 			if (cellDataHolder.getValue() != null)
 			{
-				cell.setCellValue((Date) cellDataHolder.getValue());
+				try
+				{
+					cell.setCellValue((Date) cellDefinition.parse((String) cellDataHolder.getValue()));
+				}
+				catch (ClassCastException e)
+				{
+					if (CellDataType.TEXT.equals(cellDefinition.getRecoveryType()))
+					{
+						cell.setCellValue(cellDataHolder.getValue().toString());
+					}
+					else
+					{
+						throw e;
+					}
+				}
+				catch (ParseException e)
+				{
+					if (CellDataType.TEXT.equals(cellDefinition.getRecoveryType()))
+					{
+						cell.setCellValue(cellDataHolder.getValue().toString());
+					}
+					else
+					{
+						throw e;
+					}
+				}
 			}
 			break;
 
@@ -184,7 +231,7 @@ public class ExcelFileFormatWriter {
 
 		case TEXT:
 			cell.setCellType(Cell.CELL_TYPE_STRING);
-			if (cellDataHolder.getValue() != null)
+			if (cellDataHolder != null && cellDataHolder.getValue() != null)
 			{
 				if (Boolean.TRUE.equals(cellDefinition.getAutoTrim()))
 				{
@@ -194,6 +241,10 @@ public class ExcelFileFormatWriter {
 				{
 					cell.setCellValue(String.valueOf(cellDataHolder.getValue()));
 				}
+			}
+			else
+			{
+				cell.setCellValue(cellDefinition.getDefaultValue());
 			}
 			break;
 

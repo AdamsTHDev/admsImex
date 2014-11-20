@@ -29,8 +29,15 @@ public class CellDefinition {
 	private String fieldName;
 
 	@XStreamAsAttribute
+	private String defaultValue;
+
+	@XStreamAsAttribute
 	// @XStreamConverter(CellDataTypeConverter.class)
 	private CellDataType dataType;
+
+	@XStreamAsAttribute
+	// @XStreamConverter(CellDataTypeConverter.class)
+	private CellDataType recoveryType;
 
 	@XStreamAsAttribute
 	private String dataFormat;
@@ -83,6 +90,16 @@ public class CellDefinition {
 		this.fieldName = fieldName;
 	}
 
+	public String getDefaultValue()
+	{
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue)
+	{
+		this.defaultValue = defaultValue;
+	}
+
 	public CellDataType getDataType()
 	{
 		return dataType;
@@ -91,6 +108,16 @@ public class CellDefinition {
 	public void setDataType(CellDataType dataType)
 	{
 		this.dataType = dataType;
+	}
+
+	public CellDataType getRecoveryType()
+	{
+		return recoveryType;
+	}
+
+	public void setRecoveryType(CellDataType recoveryType)
+	{
+		this.recoveryType = recoveryType;
 	}
 
 	public String getDataFormat()
@@ -198,7 +225,8 @@ public class CellDefinition {
 	@Override
 	public String toString()
 	{
-		return "CellDefinition [row=" + row + ", column=" + column + ", fieldName=" + fieldName + ", dataType=" + dataType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim + "]";
+		return "CellDefinition [row=" + row + ", currentRow=" + currentRow + ", column=" + column + ", fieldName=" + fieldName + ", defaultValue=" + defaultValue + ", dataType=" + dataType + ", recoveryType=" + recoveryType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim
+				+ ", sheetDefinition=" + sheetDefinition + "]";
 	}
 
 }

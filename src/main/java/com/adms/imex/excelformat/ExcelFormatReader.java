@@ -2,6 +2,7 @@ package com.adms.imex.excelformat;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +71,10 @@ public class ExcelFormatReader {
 
 					DataHolder sheetDataHolder = new SimpleMapDataHolder();
 					this.fileDataHolder.put(sheetDefinition.getSheetName(), sheetDataHolder);
+					if (sheetDefinition.getSheetIndex() != null)
+					{
+						this.fileDataHolder.setSheetNameByIndex(sheetDefinition.getSheetIndex(), sheetDefinition.getSheetName());
+					}
 
 					if (CollectionUtils.isNotEmpty(sheetDefinition.getCellDefinitionList()))
 					{
@@ -233,10 +238,14 @@ public class ExcelFormatReader {
 
 			if (recordCondition instanceof BeginRecordCondition)
 			{
-//				if (recordCondition.getRow() >= 2)
-//				{
-					row = sheet.getRow(recordCondition.getRow() - 2);
-//				}
+				if (Boolean.TRUE.equals(((BeginRecordCondition) recordCondition).getFirstRowAsData()))
+				{
+					row = sheet.getRow(recordCondition.getRow() - 1); //first row as data
+				}
+				else
+				{
+					row = sheet.getRow(recordCondition.getRow() - 2); //first row as header
+				}
 			}
 			else
 			{
@@ -400,7 +409,21 @@ public class ExcelFormatReader {
 				case Cell.CELL_TYPE_STRING:
 					if (CellDataType.DATE.equals(cellDefinition.getDataType()))
 					{
-						value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+						try
+						{
+							value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+						}
+						catch (ParseException pe)
+						{
+							if (CellDataType.TEXT.equals(cellDefinition.getRecoveryType()))
+							{
+								value = c.getStringCellValue();
+							}
+							else
+							{
+								throw pe;
+							}
+						}
 					}
 					else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
 					{

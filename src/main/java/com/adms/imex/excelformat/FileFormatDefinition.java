@@ -9,6 +9,9 @@ public class FileFormatDefinition {
 	private String fileName;
 
 	@XStreamAsAttribute
+	private String outputFileName;
+
+	@XStreamAsAttribute
 	private String fileType;
 
 	@XStreamAsAttribute
@@ -25,6 +28,16 @@ public class FileFormatDefinition {
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
+	}
+
+	public String getOutputFileName()
+	{
+		return outputFileName;
+	}
+
+	public void setOutputFileName(String outputFileName)
+	{
+		this.outputFileName = outputFileName;
 	}
 
 	public String getFileType()
@@ -60,7 +73,7 @@ public class FileFormatDefinition {
 	@Override
 	public String toString()
 	{
-		return "FileFormatDefinition [fileName=" + fileName + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
+		return "FileFormatDefinition [fileName=" + fileName + ", outputFileName=" + outputFileName + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
 	}
 
 }

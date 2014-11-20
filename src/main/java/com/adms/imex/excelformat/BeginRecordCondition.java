@@ -14,6 +14,9 @@ public class BeginRecordCondition extends CellDefinition {
 	@XStreamAsAttribute
 	private String checkType;
 
+	@XStreamAsAttribute
+	private Boolean firstRowAsData;
+
 	public RecordEndComparator getComparator()
 	{
 		return comparator;
@@ -44,11 +47,20 @@ public class BeginRecordCondition extends CellDefinition {
 		this.checkType = checkType;
 	}
 
+	public Boolean getFirstRowAsData()
+	{
+		return firstRowAsData;
+	}
+
+	public void setFirstRowAsData(Boolean firstRowAsData)
+	{
+		this.firstRowAsData = firstRowAsData;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "BegonRecordCondition [comparator=" + comparator + ", checkValue=" + checkValue + ", checkType=" + checkType + ", getRow()=" + getRow() + ", getColumn()=" + getColumn() + ", getFieldName()=" + getFieldName() + ", getDataType()=" + getDataType() + ", getDataFormat()="
-				+ getDataFormat() + "]";
+		return "BeginRecordCondition [comparator=" + comparator + ", checkValue=" + checkValue + ", checkType=" + checkType + ", firstRowAsData=" + firstRowAsData + "]";
 	}
 
 }

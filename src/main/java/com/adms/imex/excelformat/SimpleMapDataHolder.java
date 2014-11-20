@@ -12,6 +12,7 @@ public class SimpleMapDataHolder implements DataHolder {
 
 	private Map<String, Object> dataHolderMap;
 	private Object value;
+	private String[] sheetNames = new String[99];
 
 	public SimpleMapDataHolder()
 	{
@@ -67,6 +68,11 @@ public class SimpleMapDataHolder implements DataHolder {
 		return (DataHolder) this.dataHolderMap.get(fieldName);
 	}
 
+	public void remove(String fieldName)
+	{
+		this.dataHolderMap.remove(fieldName);
+	}
+
 	public void putDataList(String fieldName, List<DataHolder> record)
 	{
 		this.dataHolderMap.put(fieldName, record);
@@ -81,6 +87,16 @@ public class SimpleMapDataHolder implements DataHolder {
 	public List<String> getKeyList()
 	{
 		return CollectionUtils.collate(this.dataHolderMap.keySet(), new HashSet<String>());
+	}
+	
+	public void setSheetNameByIndex(int index, String sheetName)
+	{
+		this.sheetNames[index] = sheetName;
+	}
+	
+	public String getSheetNameByIndex(int index)
+	{
+		return this.sheetNames[index];
 	}
 
 }
