@@ -186,7 +186,14 @@ public class ExcelFileFormatWriter {
 			{
 				try
 				{
-					cell.setCellValue((Date) cellDefinition.parse((String) cellDataHolder.getValue()));
+					if (cellDataHolder.getValue() != null && cellDataHolder.getValue() instanceof java.util.Date)
+					{
+						cell.setCellValue((Date) cellDataHolder.getValue());
+					}
+					else
+					{
+						cell.setCellValue((Date) cellDefinition.parse((String) cellDataHolder.getValue()));
+					}
 				}
 				catch (ClassCastException e)
 				{
@@ -223,9 +230,13 @@ public class ExcelFileFormatWriter {
 
 		case NUMBER:
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-			if (cellDataHolder.getValue() != null)
+			if (cellDataHolder != null && cellDataHolder.getValue() != null)
 			{
 				cell.setCellValue(Double.valueOf(cellDataHolder.getValue().toString()));
+			}
+			else if (StringUtils.isNotBlank(cellDefinition.getDefaultValue()))
+			{
+				cell.setCellValue(Double.valueOf(cellDefinition.getDefaultValue()));
 			}
 			break;
 
@@ -242,7 +253,7 @@ public class ExcelFileFormatWriter {
 					cell.setCellValue(String.valueOf(cellDataHolder.getValue()));
 				}
 			}
-			else
+			else if (StringUtils.isNotBlank(cellDefinition.getDefaultValue()))
 			{
 				cell.setCellValue(cellDefinition.getDefaultValue());
 			}

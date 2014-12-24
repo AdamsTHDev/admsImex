@@ -411,7 +411,7 @@ public class ExcelFormatReader {
 					{
 						try
 						{
-							value = (Date) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+							value = (Date) (StringUtils.isNotBlank(c.getStringCellValue()) ? cellDefinition.parse(c.getStringCellValue()) : null);
 						}
 						catch (ParseException pe)
 						{
