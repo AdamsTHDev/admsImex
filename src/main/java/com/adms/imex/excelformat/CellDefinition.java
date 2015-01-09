@@ -14,6 +14,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 //import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * @author kampon.pan
+ *
+ */
 public class CellDefinition {
 
 	@XStreamAsAttribute
@@ -44,6 +48,9 @@ public class CellDefinition {
 
 	@XStreamAsAttribute
 	private Boolean autoTrim;
+
+	@XStreamAsAttribute
+	private Boolean ignoreError;
 
 	private SheetDefinition sheetDefinition;
 
@@ -140,6 +147,16 @@ public class CellDefinition {
 		this.autoTrim = autoTrim;
 	}
 
+	public Boolean getIgnoreError()
+	{
+		return ignoreError;
+	}
+
+	public void setIgnoreError(Boolean ignoreError)
+	{
+		this.ignoreError = ignoreError;
+	}
+
 	public SheetDefinition getSheetDefinition()
 	{
 		return sheetDefinition;
@@ -228,8 +245,7 @@ public class CellDefinition {
 	@Override
 	public String toString()
 	{
-		return "CellDefinition [row=" + row + ", currentRow=" + currentRow + ", column=" + column + ", fieldName=" + fieldName + ", defaultValue=" + defaultValue + ", dataType=" + dataType + ", recoveryType=" + recoveryType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim
-				+ ", sheetDefinition=" + sheetDefinition + "]";
+		return "CellDefinition [row=" + row + ", currentRow=" + currentRow + ", column=" + column + ", fieldName=" + fieldName + ", defaultValue=" + defaultValue + ", dataType=" + dataType + ", recoveryType=" + recoveryType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim + ", ignoreError=" + ignoreError + ", sheetDefinition=" + sheetDefinition + "]";
 	}
 
 }

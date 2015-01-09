@@ -435,7 +435,29 @@ public class ExcelFormatReader {
 					}
 					else if (CellDataType.NUMBER.equals(cellDefinition.getDataType()))
 					{
-						value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+						try
+						{
+							value = (BigDecimal) (c.getStringCellValue() != null ? cellDefinition.parse(c.getStringCellValue()) : null);
+						}
+						catch (ParseException pe)
+						{
+							if (CellDataType.TEXT.equals(cellDefinition.getRecoveryType()))
+							{
+								value = c.getStringCellValue();
+							}
+							else
+							{
+								throw pe;
+							}
+							/*
+							if (Boolean.TRUE.equals(cellDefinition.getIgnoreError()))
+							{
+								value = null;
+							}
+
+							throw pe;
+							*/
+						}
 					}
 					else
 					{
@@ -465,12 +487,31 @@ public class ExcelFormatReader {
 							break;
 						}
 					}
+					else if (cellDefinition.getDataType() == null)
+					{
+						switch (c.getCachedFormulaResultType()) {
+						case Cell.CELL_TYPE_NUMERIC:
+							value = new BigDecimal(c.getNumericCellValue());
+							break;
+
+						case Cell.CELL_TYPE_STRING:
+							value = c.getStringCellValue();
+							break;
+
+						case Cell.CELL_TYPE_BLANK:
+							value = null;
+							break;
+
+						default:
+							throw new Exception();
+						}
+					}
 					else
 					{
-						try {
+						try {System.err.println("############" + c.getCachedFormulaResultType() + "#######" + cellDefinition);
 							value = c.getStringCellValue();
 						} catch(Exception e) {
-							System.err.println("ERROR-> Sheet: " + c.getSheet().getSheetName() + " | Row: " + c.getRow().getRowNum() + " | Cell: " + c.getColumnIndex());
+							System.err.println("ERROR --> Sheet: " + c.getSheet().getSheetName() + " | Row index: " + c.getRow().getRowNum() + " | Cell index: " + c.getColumnIndex());
 							throw e;
 						}
 
