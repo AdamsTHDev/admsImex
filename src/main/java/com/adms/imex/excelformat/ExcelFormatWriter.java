@@ -118,8 +118,8 @@ public class ExcelFormatWriter {
 								}
 
 								currentRow++;
-								offsetMap.put(sheetDefinition.getSheetName().concat(recordDefinition.getListSourceName()), currentRow);
 							}
+							offsetMap.put(sheetDefinition.getSheetName().concat(recordDefinition.getListSourceName()), currentRow);
 						}
 					}
 					
