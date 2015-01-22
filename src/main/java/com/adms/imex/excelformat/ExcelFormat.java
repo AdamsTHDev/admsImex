@@ -65,6 +65,14 @@ public class ExcelFormat {
 					}
 				}
 			}
+
+			if (CollectionUtils.isNotEmpty(s.getColumnWidthDefinitionList()))
+			{
+				for (ColumnWidthDefinition c : s.getColumnWidthDefinitionList())
+				{
+					c.setSheetDefinition(s);
+				}
+			}
 		}
 	}
 
@@ -76,6 +84,7 @@ public class ExcelFormat {
 		aliasTypeMap.put("DataSheet", SheetDefinition.class);
 		aliasTypeMap.put("DataRecord", RecordDefinition.class);
 		aliasTypeMap.put("DataCell", CellDefinition.class);
+		aliasTypeMap.put("ColumnWidth", ColumnWidthDefinition.class);
 
 		return aliasTypeMap;
 	}
@@ -103,7 +112,7 @@ public class ExcelFormat {
 	{
 		if (isValidFileFormat())
 		{
-			new ExcelFileFormatWriter(this, fileDataHolder).write(output);
+			new ExcelFormatWriter(this, fileDataHolder).write(output);
 		}
 	}
 

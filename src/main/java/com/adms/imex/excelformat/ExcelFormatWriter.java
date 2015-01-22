@@ -1,8 +1,11 @@
 package com.adms.imex.excelformat;
 
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLClassLoader;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,11 +15,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.adms.imex.enums.CellDataType;
 
-public class ExcelFileFormatWriter {
+public class ExcelFormatWriter {
 
 	private DataHolder fileDataHolder;
 
@@ -24,7 +29,9 @@ public class ExcelFileFormatWriter {
 
 	private Workbook wb;
 
-	public ExcelFileFormatWriter(ExcelFormat excelFileFormat, DataHolder fileDataHolder)
+	private HashMap<String, Integer> offsetMap = new HashMap<String, Integer>();
+
+	public ExcelFormatWriter(ExcelFormat excelFileFormat, DataHolder fileDataHolder)
 			throws Exception
 	{
 		if (excelFileFormat != null && excelFileFormat.getFileFormat() != null && excelFileFormat.getFileFormat().getDataSetDefinition() != null && excelFileFormat.getFileFormat().getDataSetDefinition().getSheetDefinitionList() != null)
@@ -41,10 +48,26 @@ public class ExcelFileFormatWriter {
 	public void write(OutputStream output)
 			throws Exception
 	{
-		this.wb = new XSSFWorkbook();
-
+		InputStream templateFile = null;
 		try
 		{
+			if (StringUtils.isNotBlank(this.fileFormatDefinition.getTemplateFile()))
+			{
+				templateFile = URLClassLoader.getSystemResourceAsStream(this.fileFormatDefinition.getTemplateFile());
+				if (templateFile != null)
+				{
+					this.wb = WorkbookFactory.create(templateFile);
+				}
+				else
+				{
+					throw new Exception("Template file not found: " + this.fileFormatDefinition.getTemplateFile());
+				}
+			}
+			else
+			{
+				this.wb = new XSSFWorkbook();
+			}
+
 			if (CollectionUtils.isNotEmpty(this.fileFormatDefinition.getDataSetDefinition().getSheetDefinitionList()))
 			{
 				for (SheetDefinition sheetDefinition : this.fileFormatDefinition.getDataSetDefinition().getSheetDefinitionList())
@@ -74,7 +97,15 @@ public class ExcelFileFormatWriter {
 					{
 						for (RecordDefinition recordDefinition : sheetDefinition.getRecordDefinitionList())
 						{
-							int currentRow = recordDefinition.getBeginRow();
+							int currentRow = 0;
+							if (recordDefinition.getBeginRow() != null)
+							{
+								currentRow = recordDefinition.getBeginRow();
+							}
+							else if (recordDefinition.getOffsetRow() != null && StringUtils.isNotBlank(recordDefinition.getOffsetFrom()))
+							{
+								currentRow = offsetMap.get(sheetDefinition.getSheetName().concat(recordDefinition.getOffsetFrom())) + recordDefinition.getOffsetRow();
+							}
 
 							List<DataHolder> recordDataHolderList = sheetDataHolder.getDataList(recordDefinition.getListSourceName());
 							for (DataHolder recordDataHolder : recordDataHolderList)
@@ -87,8 +118,29 @@ public class ExcelFileFormatWriter {
 								}
 
 								currentRow++;
+								offsetMap.put(sheetDefinition.getSheetName().concat(recordDefinition.getListSourceName()), currentRow);
 							}
 						}
+					}
+					
+					if (CollectionUtils.isNotEmpty(sheetDefinition.getColumnWidthDefinitionList()))
+					{
+						for (ColumnWidthDefinition columnWidthDefinition : sheetDefinition.getColumnWidthDefinitionList())
+						{
+							this.wb.getSheet(sheetDefinition.getSheetName()).setColumnWidth(columnWidthDefinition.getColumn().getColumnIndex(), columnWidthDefinition.getWidth());
+						}
+					}
+				}
+			}
+
+			if (StringUtils.isNotBlank(this.fileFormatDefinition.getTemplateFile()) && Boolean.TRUE.equals(this.fileFormatDefinition.getRemoveTemplateAfterComplete()))
+			{
+				for (int i = 0; i < this.wb.getNumberOfSheets(); i++)
+				{
+					if (this.wb.getSheetAt(i).getSheetName().equals(this.fileFormatDefinition.getTemplateSheetName()))
+					{
+						this.wb.removeSheetAt(i);
+						break;
 					}
 				}
 			}
@@ -101,6 +153,7 @@ public class ExcelFileFormatWriter {
 		}
 		finally
 		{
+			try { templateFile.close(); } catch (Exception e) { }
 			this.wb.close();
 		}
 	}
@@ -122,6 +175,15 @@ public class ExcelFileFormatWriter {
 		if (sheet == null)
 		{
 			sheet = this.wb.createSheet(sheetName);
+		}
+		
+		if (cellDefinition.getSheetDefinition().getDisplayGridlines() == null || cellDefinition.getSheetDefinition().getDisplayGridlines().equals(Boolean.TRUE))
+		{
+			sheet.setDisplayGridlines(true);
+		}
+		else
+		{
+			sheet.setDisplayGridlines(false);
 		}
 
 		return sheet;
@@ -157,7 +219,13 @@ public class ExcelFileFormatWriter {
 	private CellStyle getCellStyle(CellDefinition cellDefinition)
 	{
 		CellStyle cs = null;
-		if (StringUtils.isNotBlank(cellDefinition.getDataFormat()))
+		
+		if (StringUtils.isNotBlank(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateFile()) && StringUtils.isNotBlank(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName())
+				&& cellDefinition.getTemplateRow() != null && cellDefinition.getTemplateColumn() != null)
+		{
+			cs = this.wb.getSheet(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName()).getRow(cellDefinition.getTemplateRow() - 1).getCell(cellDefinition.getTemplateColumn().getColumnIndex()).getCellStyle();
+		}
+		else if (StringUtils.isNotBlank(cellDefinition.getDataFormat()))
 		{
 			cs = this.wb.createCellStyle();
 			cs.setDataFormat(this.wb.getCreationHelper().createDataFormat().getFormat(cellDefinition.getDataFormat().trim()));
@@ -170,6 +238,46 @@ public class ExcelFileFormatWriter {
 			throws Exception
 	{
 		Cell cell = getCell(cellDefinition);
+
+		if (cellDefinition.getFieldName() != null && cellDefinition.getFieldName().equals("AYP"))
+		{
+			//TODO
+//			System.out.println(cellDefinition);
+		}
+		if ((cellDefinition.getRowMergeFrom() != null && cellDefinition.getRowMergeTo() != null) || (cellDefinition.getColumnMergeFrom() != null && cellDefinition.getColumnMergeTo() != null))
+		{
+			if (cellDefinition.getRowMergeFrom() != null && cellDefinition.getRowMergeTo() != null && cellDefinition.getColumnMergeFrom() != null && cellDefinition.getColumnMergeTo() != null)
+			{
+				cell.getSheet().addMergedRegion(new CellRangeAddress(
+						cellDefinition.getRowMergeFrom() - 1, cellDefinition.getRowMergeTo() - 1,
+						cellDefinition.getColumnMergeFrom().getColumnIndex(), cellDefinition.getColumnMergeTo().getColumnIndex()));
+			}
+			else if ((cellDefinition.getRowMergeFrom() == null && cellDefinition.getRowMergeTo() == null) || (cellDefinition.getColumnMergeFrom() != null && cellDefinition.getColumnMergeTo() != null))
+			{
+				if (cellDefinition.getCurrentRow() != null)
+				{
+					cell.getSheet().addMergedRegion(new CellRangeAddress(
+							(cellDefinition.getRow() - 1) + (cellDefinition.getCurrentRow() - 1), (cellDefinition.getRow() - 1) + (cellDefinition.getCurrentRow() - 1),
+							cellDefinition.getColumnMergeFrom().getColumnIndex(), cellDefinition.getColumnMergeTo().getColumnIndex()));
+				}
+				else
+				{
+					cell.getSheet().addMergedRegion(new CellRangeAddress(
+							cellDefinition.getRow() - 1, cellDefinition.getRow() - 1,
+							cellDefinition.getColumnMergeFrom().getColumnIndex(), cellDefinition.getColumnMergeTo().getColumnIndex()));
+				}
+			}
+			else if ((cellDefinition.getRowMergeFrom() != null && cellDefinition.getRowMergeTo() != null) || (cellDefinition.getColumnMergeFrom() == null && cellDefinition.getColumnMergeTo() == null))
+			{
+				cell.getSheet().addMergedRegion(new CellRangeAddress(
+						cellDefinition.getRowMergeFrom() - 1, cellDefinition.getRowMergeTo() - 1,
+						cellDefinition.getColumn().getColumnIndex(), cellDefinition.getColumn().getColumnIndex()));
+			}
+			else
+			{
+				throw new Exception("Invalid merge area! " + cellDefinition);
+			}
+		}
 
 		// for boolean, double, string, calendar, date
 		switch (cellDefinition.getDataType()) {
@@ -229,14 +337,19 @@ public class ExcelFileFormatWriter {
 			break;
 
 		case NUMBER:
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cellDataHolder != null && cellDataHolder.getValue() != null)
 			{
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				cell.setCellValue(Double.valueOf(cellDataHolder.getValue().toString()));
 			}
 			else if (StringUtils.isNotBlank(cellDefinition.getDefaultValue()))
 			{
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				cell.setCellValue(Double.valueOf(cellDefinition.getDefaultValue()));
+			}
+			else
+			{
+				//blank
 			}
 			break;
 

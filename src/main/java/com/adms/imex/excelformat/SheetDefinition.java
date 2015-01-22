@@ -20,6 +20,9 @@ public class SheetDefinition extends CellDefinitionContainer {
 	private Boolean skipWhenNull;
 
 	@XStreamAsAttribute
+	private Boolean displayGridlines;
+
+	@XStreamAsAttribute
 	private Boolean repeatSheet;
 
 	@XStreamAsAttribute
@@ -33,6 +36,9 @@ public class SheetDefinition extends CellDefinitionContainer {
 
 	@XStreamImplicit(itemFieldName = "DataRecord")
 	private List<RecordDefinition> recordDefinitionList;
+
+	@XStreamImplicit(itemFieldName = "ColumnWidth")
+	protected List<ColumnWidthDefinition> columnWidthDefinitionList;
 
 	private FileFormatDefinition fileFormatDefinition;
 
@@ -74,6 +80,16 @@ public class SheetDefinition extends CellDefinitionContainer {
 	public void setSkipWhenNull(Boolean skipWhenNull)
 	{
 		this.skipWhenNull = skipWhenNull;
+	}
+
+	public Boolean getDisplayGridlines()
+	{
+		return displayGridlines;
+	}
+
+	public void setDisplayGridlines(Boolean displayGridlines)
+	{
+		this.displayGridlines = displayGridlines;
 	}
 
 	public Boolean getRepeatSheet()
@@ -126,6 +142,16 @@ public class SheetDefinition extends CellDefinitionContainer {
 		this.recordDefinitionList = recordDefinitionList;
 	}
 
+	public List<ColumnWidthDefinition> getColumnWidthDefinitionList()
+	{
+		return columnWidthDefinitionList;
+	}
+
+	public void setColumnWidthDefinitionList(List<ColumnWidthDefinition> columnWidthDefinitionList)
+	{
+		this.columnWidthDefinitionList = columnWidthDefinitionList;
+	}
+
 	public FileFormatDefinition getFileFormatDefinition()
 	{
 		return fileFormatDefinition;
@@ -139,7 +165,7 @@ public class SheetDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "SheetDefinition [sheetName=" + sheetName + ", outputSheetName=" + outputSheetName + ", sheetIndex=" + sheetIndex + ", skipWhenNull=" + skipWhenNull + ", recordDefinitionList=" + recordDefinitionList + "]";
+		return "SheetDefinition [sheetName=" + sheetName + ", outputSheetName=" + outputSheetName + ", sheetIndex=" + sheetIndex + ", skipWhenNull=" + skipWhenNull + ", displayGridlines=" + displayGridlines + ", columnWidthDefinitionList=" + columnWidthDefinitionList + ", recordDefinitionList=" + recordDefinitionList + "]";
 	}
 
 }

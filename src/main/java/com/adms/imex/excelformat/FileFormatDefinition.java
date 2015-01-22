@@ -12,6 +12,15 @@ public class FileFormatDefinition {
 	private String outputFileName;
 
 	@XStreamAsAttribute
+	private String templateFile;
+
+	@XStreamAsAttribute
+	private String templateSheetName;
+
+	@XStreamAsAttribute
+	private Boolean removeTemplateAfterComplete;
+
+	@XStreamAsAttribute
 	private String fileType;
 
 	@XStreamAsAttribute
@@ -38,6 +47,36 @@ public class FileFormatDefinition {
 	public void setOutputFileName(String outputFileName)
 	{
 		this.outputFileName = outputFileName;
+	}
+
+	public String getTemplateFile()
+	{
+		return templateFile;
+	}
+
+	public String getTemplateSheetName()
+	{
+		return templateSheetName;
+	}
+
+	public void setTemplateSheetName(String templateSheetName)
+	{
+		this.templateSheetName = templateSheetName;
+	}
+
+	public Boolean getRemoveTemplateAfterComplete()
+	{
+		return removeTemplateAfterComplete;
+	}
+
+	public void setRemoveTemplateAfterComplete(Boolean removeTemplateAfterComplete)
+	{
+		this.removeTemplateAfterComplete = removeTemplateAfterComplete;
+	}
+
+	public void setTemplateFile(String templateFile)
+	{
+		this.templateFile = templateFile;
 	}
 
 	public String getFileType()
@@ -73,7 +112,7 @@ public class FileFormatDefinition {
 	@Override
 	public String toString()
 	{
-		return "FileFormatDefinition [fileName=" + fileName + ", outputFileName=" + outputFileName + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
+		return "FileFormatDefinition [fileName=" + fileName + ", outputFileName=" + outputFileName + ", templateFile" + templateFile + ", templateSheetName=" + templateSheetName + ", removeTemplateAfterComplete=" + removeTemplateAfterComplete + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
 	}
 
 }

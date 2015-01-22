@@ -12,8 +12,6 @@ import com.adms.imex.enums.CellDataType;
 import com.adms.imex.enums.ExcelColumn;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-//import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 /**
  * @author kampon.pan
  *
@@ -23,11 +21,28 @@ public class CellDefinition {
 	@XStreamAsAttribute
 	private Integer row;
 
+	@XStreamAsAttribute
+	private ExcelColumn column;
+
+	@XStreamAsAttribute
+	private Integer templateRow;
+
+	@XStreamAsAttribute
+	private ExcelColumn templateColumn;
+
+	@XStreamAsAttribute
+	private Integer rowMergeFrom;
+
+	@XStreamAsAttribute
+	private Integer rowMergeTo;
+
 	private Integer currentRow;
 
 	@XStreamAsAttribute
-	// @XStreamConverter(ExcelColumnConverter.class)
-	private ExcelColumn column;
+	private ExcelColumn columnMergeFrom;
+
+	@XStreamAsAttribute
+	private ExcelColumn columnMergeTo;
 
 	@XStreamAsAttribute
 	private String fieldName;
@@ -36,11 +51,9 @@ public class CellDefinition {
 	private String defaultValue;
 
 	@XStreamAsAttribute
-	// @XStreamConverter(CellDataTypeConverter.class)
 	private CellDataType dataType;
 
 	@XStreamAsAttribute
-	// @XStreamConverter(CellDataTypeConverter.class)
 	private CellDataType recoveryType;
 
 	@XStreamAsAttribute
@@ -85,6 +98,66 @@ public class CellDefinition {
 	public void setColumn(ExcelColumn column)
 	{
 		this.column = column;
+	}
+
+	public Integer getTemplateRow()
+	{
+		return templateRow;
+	}
+
+	public void setTemplateRow(Integer templateRow)
+	{
+		this.templateRow = templateRow;
+	}
+
+	public ExcelColumn getTemplateColumn()
+	{
+		return templateColumn;
+	}
+
+	public void setTemplateColumn(ExcelColumn templateColumn)
+	{
+		this.templateColumn = templateColumn;
+	}
+
+	public Integer getRowMergeFrom()
+	{
+		return rowMergeFrom;
+	}
+
+	public void setRowMergeFrom(Integer rowMergeFrom)
+	{
+		this.rowMergeFrom = rowMergeFrom;
+	}
+
+	public Integer getRowMergeTo()
+	{
+		return rowMergeTo;
+	}
+
+	public void setRowMergeTo(Integer rowMergeTo)
+	{
+		this.rowMergeTo = rowMergeTo;
+	}
+
+	public ExcelColumn getColumnMergeFrom()
+	{
+		return columnMergeFrom;
+	}
+
+	public void setColumnMergeFrom(ExcelColumn columnMergeFrom)
+	{
+		this.columnMergeFrom = columnMergeFrom;
+	}
+
+	public ExcelColumn getColumnMergeTo()
+	{
+		return columnMergeTo;
+	}
+
+	public void setColumnMergeTo(ExcelColumn columnMergeTo)
+	{
+		this.columnMergeTo = columnMergeTo;
 	}
 
 	public String getFieldName()
@@ -245,7 +318,7 @@ public class CellDefinition {
 	@Override
 	public String toString()
 	{
-		return "CellDefinition [row=" + row + ", currentRow=" + currentRow + ", column=" + column + ", fieldName=" + fieldName + ", defaultValue=" + defaultValue + ", dataType=" + dataType + ", recoveryType=" + recoveryType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim + ", ignoreError=" + ignoreError + ", sheetDefinition=" + sheetDefinition + "]";
+		return "CellDefinition [row=" + row + ", currentRow=" + currentRow + ", column=" + column + ", templateRow=" + templateRow + ", templateColumn=" + templateColumn + ", rowMergeFrom=" + rowMergeFrom + ", rowMergeTo=" + rowMergeTo + ", columnMergeFrom=" + columnMergeFrom + ", columnMergeTo=" + columnMergeTo + ", fieldName=" + fieldName + ", defaultValue=" + defaultValue + ", dataType=" + dataType + ", recoveryType=" + recoveryType + ", dataFormat=" + dataFormat + ", autoTrim=" + autoTrim + ", ignoreError=" + ignoreError + ", sheetDefinition=" + sheetDefinition + "]";
 	}
 
 }

@@ -2,11 +2,11 @@
 <FileFormat fileName="" fileType="xlsx" locale="US">
 	<DataSet description="sampleData">
 		<DataSheet sheetName="Sheet1" sheetIndex="0"> <!-- index start with 0, 1, 2,...  -->
-			<!-- <DataCell row="1" column="A" dataType="text|number|date|boolean|blank|formula|error" dataFormat="" fieldName="fieldAaa" defaultValue="" /> -->
+			<!-- <DataCell row="1" column="A" dataType="TEXT|NUMBER|DATE|BOOLEAN|BLANK|FORMULA|ERROR" dataFormat="" fieldName="fieldAaa" defaultValue="" /> -->
 			<DataCell row="2" column="B" dataType="DATE" dataFormat="dd/MM/yyyy" fieldName="reportAsOf" />
 			<DataCell row="2" column="D" dataType="DATE" dataFormat="yyyyMMMdd" fieldName="testDateString" />
 			<DataRecord listSourceName="personList" beginRow="1" endRow="20">
-				<BeginRecordCondition column="B" comparator="EQ" checkValue="sampleBegin" />
+				<BeginRecordCondition column="B" comparator="EQ" checkValue="sampleBegin" firstRowAsData="TRUE|FALSE"/>
 				
 				<DataCell row="1" column="B" dataType="NUMBER" dataFormat="0" fieldName="index" />
 				<DataCell row="1" column="C" dataType="TEXT" fieldName="firstName" autoTrim="TRUE"/>
@@ -23,13 +23,7 @@
 				<EndRecordCondition column="G" comparator="EQ" checkValue="END" />
 			</DataRecord>
 		</DataSheet>
-		<DataSheet sheetIndex="1" skipWhenNull="TRUE" /> <!-- set skipWhenNull to 'TRUE' to avoid exception when this Sheet is not found. Default value is 'FALSE' -->
+		<DataSheet sheetIndex="1" skipWhenNull="TRUE|FALSE" /> <!-- set skipWhenNull to 'TRUE' to avoid exception when this Sheet is not found. Default value is 'FALSE' -->
 
-		<!--
-		<DataSheet sheetIndex="10" repeatSheet="TRUE" repeatUntilNull="TRUE" repeatUntilIndex="" repeatUntilSheetname="">
-			<DataCell row="1" column="A" dataType="TEXT" fieldName="testRepeatSheet" />
-			<DataCell row="1" column="B" dataType="DATE" dataFormat="dd/MM/yyyy" fieldName="reportAsOf" />
-		</DataSheet>
-		-->
 	</DataSet>
 </FileFormat>

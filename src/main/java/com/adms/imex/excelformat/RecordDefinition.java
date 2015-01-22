@@ -14,6 +14,12 @@ public class RecordDefinition extends CellDefinitionContainer {
 	@XStreamAsAttribute
 	private Integer endRow;
 
+	@XStreamAsAttribute
+	private Integer offsetRow;
+
+	@XStreamAsAttribute
+	private String offsetFrom;
+
 	@XStreamAlias("BeginRecordCondition")
 	private BeginRecordCondition beginRecordCondition;
 
@@ -50,6 +56,26 @@ public class RecordDefinition extends CellDefinitionContainer {
 	public void setEndRow(Integer endRow)
 	{
 		this.endRow = endRow;
+	}
+
+	public Integer getOffsetRow()
+	{
+		return offsetRow;
+	}
+
+	public void setOffsetRow(Integer offsetRow)
+	{
+		this.offsetRow = offsetRow;
+	}
+
+	public String getOffsetFrom()
+	{
+		return offsetFrom;
+	}
+
+	public void setOffsetFrom(String offsetFrom)
+	{
+		this.offsetFrom = offsetFrom;
 	}
 
 	public BeginRecordCondition getBeginRecordCondition()
@@ -95,7 +121,7 @@ public class RecordDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", beginRecordCondition=" + beginRecordCondition + ", endRecordCondition=" + endRecordCondition + "]";
+		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", offsetRow=" + offsetRow + ", offsetFrom=" + offsetFrom + ", beginRecordCondition=" + beginRecordCondition + ", endRecordCondition=" + endRecordCondition + "]";
 	}
 
 }
