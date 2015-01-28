@@ -99,4 +99,9 @@ public class SimpleMapDataHolder implements DataHolder {
 		return this.sheetNames[index];
 	}
 
+	public void removeSheetByIndex(int index)
+	{
+		remove(getSheetNameByIndex(index));
+	}
+
 }

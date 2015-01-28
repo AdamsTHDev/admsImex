@@ -32,4 +32,6 @@ public interface DataHolder {
 	public void setSheetNameByIndex(int index, String sheetName);
 	
 	public String getSheetNameByIndex(int index);
+
+	public void removeSheetByIndex(int index);
 }
