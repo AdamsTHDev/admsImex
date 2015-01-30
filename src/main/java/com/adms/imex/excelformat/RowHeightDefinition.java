@@ -1,36 +1,35 @@
 package com.adms.imex.excelformat;
 
-import com.adms.imex.enums.ExcelColumn;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class ColumnWidthDefinition {
+public class RowHeightDefinition {
 
 	@XStreamAsAttribute
-	private Integer width;
+	private Integer height;
 
 	@XStreamAsAttribute
-	private ExcelColumn column;
+	private Integer row;
 
 	private SheetDefinition sheetDefinition;
 
-	public Integer getWidth()
+	public Integer getHeight()
 	{
-		return width;
+		return height;
 	}
 
-	public void setWidth(Integer width)
+	public void setHeight(Integer height)
 	{
-		this.width = width;
+		this.height = height;
 	}
 
-	public ExcelColumn getColumn()
+	public Integer getRow()
 	{
-		return column;
+		return row;
 	}
 
-	public void setColumn(ExcelColumn column)
+	public void setRow(Integer row)
 	{
-		this.column = column;
+		this.row = row;
 	}
 
 	public SheetDefinition getSheetDefinition()
@@ -46,7 +45,7 @@ public class ColumnWidthDefinition {
 	@Override
 	public String toString()
 	{
-		return "ColumnWidthDefinition [width=" + width + ", column=" + column + "]";
+		return "RowHeightDefinition [height=" + height + ", row=" + row + "]";
 	}
 
 }

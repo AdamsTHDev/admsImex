@@ -108,18 +108,38 @@ public class ExcelFormatWriter {
 							}
 
 							List<DataHolder> recordDataHolderList = sheetDataHolder.getDataList(recordDefinition.getListSourceName());
-							for (DataHolder recordDataHolder : recordDataHolderList)
+							if (recordDataHolderList == null && Boolean.TRUE.equals(recordDefinition.getSkipWhenNull()))
 							{
-								for (CellDefinition cellDefinition : recordDefinition.getCellDefinitionList())
+								// do nothing
+							}
+							else
+							{
+								if (CollectionUtils.isEmpty(recordDataHolderList))
 								{
-									DataHolder cellDataHolder = recordDataHolder.get(cellDefinition.getFieldName());
-									cellDefinition.setCurrentRow(currentRow);
-									writeCellValue(cellDataHolder, cellDefinition);
+									throw new Exception("Error!! not found dataList for listSourceName: " + recordDefinition.getListSourceName());
 								}
 
-								currentRow++;
+								for (DataHolder recordDataHolder : recordDataHolderList)
+								{
+									for (CellDefinition cellDefinition : recordDefinition.getCellDefinitionList())
+									{
+										DataHolder cellDataHolder = recordDataHolder.get(cellDefinition.getFieldName());
+										cellDefinition.setCurrentRow(currentRow);
+										writeCellValue(cellDataHolder, cellDefinition);
+									}
+
+									currentRow++;
+								}
 							}
 							offsetMap.put(sheetDefinition.getSheetName().concat(recordDefinition.getListSourceName()), currentRow);
+						}
+					}
+					
+					if (CollectionUtils.isNotEmpty(sheetDefinition.getRowHeightDefinitionList()))
+					{
+						for (RowHeightDefinition rowHeightDefinition : sheetDefinition.getRowHeightDefinitionList())
+						{
+							this.wb.getSheet(sheetDefinition.getSheetName()).getRow(rowHeightDefinition.getRow() - 1).setHeight(rowHeightDefinition.getHeight().shortValue());
 						}
 					}
 					

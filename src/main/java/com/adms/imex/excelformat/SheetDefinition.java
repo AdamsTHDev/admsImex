@@ -40,6 +40,9 @@ public class SheetDefinition extends CellDefinitionContainer {
 	@XStreamImplicit(itemFieldName = "ColumnWidth")
 	protected List<ColumnWidthDefinition> columnWidthDefinitionList;
 
+	@XStreamImplicit(itemFieldName = "RowHeight")
+	protected List<RowHeightDefinition> rowHeightDefinitionList;
+
 	private FileFormatDefinition fileFormatDefinition;
 
 	public String getSheetName()
@@ -152,6 +155,16 @@ public class SheetDefinition extends CellDefinitionContainer {
 		this.columnWidthDefinitionList = columnWidthDefinitionList;
 	}
 
+	public List<RowHeightDefinition> getRowHeightDefinitionList()
+	{
+		return rowHeightDefinitionList;
+	}
+
+	public void setRowHeightDefinitionList(List<RowHeightDefinition> rowHeightDefinitionList)
+	{
+		this.rowHeightDefinitionList = rowHeightDefinitionList;
+	}
+
 	public FileFormatDefinition getFileFormatDefinition()
 	{
 		return fileFormatDefinition;
@@ -165,7 +178,7 @@ public class SheetDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "SheetDefinition [sheetName=" + sheetName + ", outputSheetName=" + outputSheetName + ", sheetIndex=" + sheetIndex + ", skipWhenNull=" + skipWhenNull + ", displayGridlines=" + displayGridlines + ", columnWidthDefinitionList=" + columnWidthDefinitionList + ", recordDefinitionList=" + recordDefinitionList + "]";
+		return "SheetDefinition [sheetName=" + sheetName + ", outputSheetName=" + outputSheetName + ", sheetIndex=" + sheetIndex + ", skipWhenNull=" + skipWhenNull + ", displayGridlines=" + displayGridlines + ", rowHeightDefinitionList=" + rowHeightDefinitionList + ", columnWidthDefinitionList=" + columnWidthDefinitionList + ", recordDefinitionList=" + recordDefinitionList + "]";
 	}
 
 }

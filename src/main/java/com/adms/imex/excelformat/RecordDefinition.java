@@ -15,6 +15,9 @@ public class RecordDefinition extends CellDefinitionContainer {
 	private Integer endRow;
 
 	@XStreamAsAttribute
+	private Boolean skipWhenNull;
+
+	@XStreamAsAttribute
 	private Integer offsetRow;
 
 	@XStreamAsAttribute
@@ -56,6 +59,16 @@ public class RecordDefinition extends CellDefinitionContainer {
 	public void setEndRow(Integer endRow)
 	{
 		this.endRow = endRow;
+	}
+
+	public Boolean getSkipWhenNull()
+	{
+		return skipWhenNull;
+	}
+
+	public void setSkipWhenNull(Boolean skipWhenNull)
+	{
+		this.skipWhenNull = skipWhenNull;
 	}
 
 	public Integer getOffsetRow()
@@ -121,7 +134,7 @@ public class RecordDefinition extends CellDefinitionContainer {
 	@Override
 	public String toString()
 	{
-		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", offsetRow=" + offsetRow + ", offsetFrom=" + offsetFrom + ", beginRecordCondition=" + beginRecordCondition + ", endRecordCondition=" + endRecordCondition + "]";
+		return "RecordDefinition [listSourceName=" + listSourceName + ", beginRow=" + beginRow + ", endRow=" + endRow + ", skipWhenNull=" + skipWhenNull + ", offsetRow=" + offsetRow + ", offsetFrom=" + offsetFrom + ", beginRecordCondition=" + beginRecordCondition + ", endRecordCondition=" + endRecordCondition + "]";
 	}
 
 }

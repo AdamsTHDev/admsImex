@@ -73,6 +73,14 @@ public class ExcelFormat {
 					c.setSheetDefinition(s);
 				}
 			}
+
+			if (CollectionUtils.isNotEmpty(s.getRowHeightDefinitionList()))
+			{
+				for (RowHeightDefinition r : s.getRowHeightDefinitionList())
+				{
+					r.setSheetDefinition(s);
+				}
+			}
 		}
 	}
 
