@@ -191,14 +191,18 @@ public class IOUtils {
 	public static void copyFile(File src, File dest)
 			throws IOException
 	{
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
 		FileChannel srcCh = null;
 		FileChannel destCh = null;
 		try
 		{
 			createPaths(dest);
-
-			srcCh = new FileInputStream(src).getChannel();
-			destCh = new FileOutputStream(dest).getChannel();
+			fis = new FileInputStream(src);
+			fos = new FileOutputStream(dest);
+			
+			srcCh = fis.getChannel();
+			destCh = fos.getChannel();
 
 			destCh.lock();
 
@@ -210,6 +214,8 @@ public class IOUtils {
 		{
 			IOUtils.close(srcCh);
 			IOUtils.close(destCh);
+			fis.close();
+			fos.close();
 		}
 	}
 
