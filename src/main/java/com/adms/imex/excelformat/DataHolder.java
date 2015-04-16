@@ -13,7 +13,7 @@ public interface DataHolder {
 	
 	public BigDecimal getDecimalValue();
 	
-	public void setValue(Object value);
+	public DataHolder setValue(Object value);
 
 	public void put(String fieldName, DataHolder dataHolder);
 

@@ -89,7 +89,16 @@ public class ExcelFormatWriter {
 						{
 							DataHolder cellDataHolder = sheetDataHolder.get(cellDefinition.getFieldName());
 
-							writeCellValue(cellDataHolder, cellDefinition);
+							try
+							{
+								writeCellValue(cellDataHolder, cellDefinition);
+							}
+							catch (Exception e)
+							{
+								System.err.println("cellDataHolder: " + cellDataHolder);
+								System.err.println("cellDefinition: " + cellDefinition);
+								throw e;
+							}
 						}
 					}
 
@@ -104,6 +113,11 @@ public class ExcelFormatWriter {
 							}
 							else if (recordDefinition.getOffsetRow() != null && StringUtils.isNotBlank(recordDefinition.getOffsetFrom()))
 							{
+								if (offsetMap.get(sheetDefinition.getSheetName().concat(recordDefinition.getOffsetFrom())) == null)
+								{
+									throw new Exception("offset configure invalid (sheetName: " + sheetDefinition.getSheetName() + ", offsetFrom:" + recordDefinition.getOffsetFrom() + ")");
+								}
+
 								currentRow = offsetMap.get(sheetDefinition.getSheetName().concat(recordDefinition.getOffsetFrom())) + recordDefinition.getOffsetRow();
 							}
 
@@ -114,7 +128,7 @@ public class ExcelFormatWriter {
 							}
 							else
 							{
-								if (CollectionUtils.isEmpty(recordDataHolderList))
+								if (CollectionUtils.isEmpty(recordDataHolderList) && !Boolean.TRUE.equals(recordDefinition.getSkipWhenNull()))
 								{
 									throw new Exception("Error!! not found dataList for listSourceName: " + recordDefinition.getListSourceName());
 								}
@@ -139,7 +153,12 @@ public class ExcelFormatWriter {
 					{
 						for (RowHeightDefinition rowHeightDefinition : sheetDefinition.getRowHeightDefinitionList())
 						{
-							this.wb.getSheet(sheetDefinition.getSheetName()).getRow(rowHeightDefinition.getRow() - 1).setHeight(rowHeightDefinition.getHeight().shortValue());
+							Row row = this.wb.getSheet(sheetDefinition.getSheetName()).getRow(rowHeightDefinition.getRow() - 1);
+							if (row == null)
+							{
+								row = this.wb.getSheet(sheetDefinition.getSheetName()).createRow(rowHeightDefinition.getRow() - 1);
+							}
+							row.setHeight(rowHeightDefinition.getHeight().shortValue());
 						}
 					}
 					
@@ -243,7 +262,25 @@ public class ExcelFormatWriter {
 		if (StringUtils.isNotBlank(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateFile()) && StringUtils.isNotBlank(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName())
 				&& cellDefinition.getTemplateRow() != null && cellDefinition.getTemplateColumn() != null)
 		{
-			cs = this.wb.getSheet(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName()).getRow(cellDefinition.getTemplateRow() - 1).getCell(cellDefinition.getTemplateColumn().getColumnIndex()).getCellStyle();
+			try
+			{
+				cs = this.wb.getSheet(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName()).getRow(cellDefinition.getTemplateRow() - 1).getCell(cellDefinition.getTemplateColumn().getColumnIndex()).getCellStyle();
+			}
+			catch (Exception e)
+			{
+				System.err.println("error while getting CellStyle from template");
+				System.err.println("1"+cellDefinition.getSheetDefinition());
+				System.err.println("Template File  : "+cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateFile());
+				System.err.println("Template Sheet : "+cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName());
+				System.err.println("Template Row   : "+cellDefinition.getTemplateRow());
+				System.err.println("Template Column: "+cellDefinition.getTemplateColumn());
+//				System.err.println("6"+cellDefinition.getTemplateColumn().getColumnIndex());
+//				System.err.println("7"+this.wb.getSheet(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName()).getRow(cellDefinition.getTemplateRow() - 1));
+//				System.err.println("8"+this.wb.getSheet(cellDefinition.getSheetDefinition().getFileFormatDefinition().getTemplateSheetName()).getRow(cellDefinition.getTemplateRow() - 1).getCell(cellDefinition.getTemplateColumn().getColumnIndex()).getCellStyle());
+//				System.err.println("error while getting template");
+//				System.err.println();
+				e.printStackTrace();
+			}
 		}
 		else if (StringUtils.isNotBlank(cellDefinition.getDataFormat()))
 		{
@@ -342,6 +379,7 @@ public class ExcelFormatWriter {
 					}
 					else
 					{
+						System.err.println("Error!! parsing error " + cellDefinition);
 						throw e;
 					}
 				}

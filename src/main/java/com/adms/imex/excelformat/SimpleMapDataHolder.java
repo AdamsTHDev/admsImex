@@ -53,9 +53,10 @@ public class SimpleMapDataHolder implements DataHolder {
 		return (BigDecimal) (null == value ? value : new BigDecimal(getStringValue()));
 	}
 
-	public void setValue(Object value)
+	public DataHolder setValue(Object value)
 	{
 		this.value = value;
+		return this;
 	}
 
 	public void put(String fieldName, DataHolder value)
