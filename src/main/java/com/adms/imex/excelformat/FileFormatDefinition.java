@@ -21,6 +21,9 @@ public class FileFormatDefinition {
 	private Boolean removeTemplateAfterComplete;
 
 	@XStreamAsAttribute
+	private String reOrderSheetName;
+
+	@XStreamAsAttribute
 	private String fileType;
 
 	@XStreamAsAttribute
@@ -74,6 +77,16 @@ public class FileFormatDefinition {
 		this.removeTemplateAfterComplete = removeTemplateAfterComplete;
 	}
 
+	public String getReOrderSheetName()
+	{
+		return reOrderSheetName;
+	}
+
+	public void setReOrderSheetName(String reOrderSheetName)
+	{
+		this.reOrderSheetName = reOrderSheetName;
+	}
+
 	public void setTemplateFile(String templateFile)
 	{
 		this.templateFile = templateFile;
@@ -112,7 +125,7 @@ public class FileFormatDefinition {
 	@Override
 	public String toString()
 	{
-		return "FileFormatDefinition [fileName=" + fileName + ", outputFileName=" + outputFileName + ", templateFile" + templateFile + ", templateSheetName=" + templateSheetName + ", removeTemplateAfterComplete=" + removeTemplateAfterComplete + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
+		return "FileFormatDefinition [fileName=" + fileName + ", outputFileName=" + outputFileName + ", templateFile" + templateFile + ", templateSheetName=" + templateSheetName + ", removeTemplateAfterComplete=" + removeTemplateAfterComplete + ", reOrderSheetName=" + reOrderSheetName + ", fileType=" + fileType + ", locale=" + locale + ", dataSetDefinition=" + dataSetDefinition + "]";
 	}
 
 }

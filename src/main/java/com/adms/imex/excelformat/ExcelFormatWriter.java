@@ -184,6 +184,20 @@ public class ExcelFormatWriter {
 				}
 			}
 
+			if (StringUtils.isNotBlank(this.fileFormatDefinition.getReOrderSheetName()))
+			{
+				for (int i = 0; i < this.wb.getNumberOfSheets(); i++)
+				{
+					if (this.wb.getSheetAt(i).getSheetName().equals(this.fileFormatDefinition.getReOrderSheetName()))
+					{
+						this.wb.cloneSheet(i);
+						this.wb.removeSheetAt(i);
+						this.wb.setSheetName(this.wb.getNumberOfSheets() - 1, this.fileFormatDefinition.getReOrderSheetName());
+						break;
+					}
+				}
+			}
+
 			this.wb.write(output);
 		}
 		catch (Exception e)
@@ -395,19 +409,27 @@ public class ExcelFormatWriter {
 			break;
 
 		case NUMBER:
-			if (cellDataHolder != null && cellDataHolder.getValue() != null)
+			try
 			{
-				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				cell.setCellValue(Double.valueOf(cellDataHolder.getValue().toString()));
+				if (cellDataHolder != null && cellDataHolder.getValue() != null)
+				{
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					cell.setCellValue(Double.valueOf(cellDataHolder.getValue().toString()));
+				}
+				else if (StringUtils.isNotBlank(cellDefinition.getDefaultValue()))
+				{
+					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+					cell.setCellValue(Double.valueOf(cellDefinition.getDefaultValue()));
+				}
+				else
+				{
+					//blank
+				}
 			}
-			else if (StringUtils.isNotBlank(cellDefinition.getDefaultValue()))
+			catch (Exception e)
 			{
-				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				cell.setCellValue(Double.valueOf(cellDefinition.getDefaultValue()));
-			}
-			else
-			{
-				//blank
+				System.err.println("Error while reading cell: " + cellDefinition);
+				throw e;
 			}
 			break;
 
